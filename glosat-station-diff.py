@@ -20,6 +20,9 @@ import pandas as pd
 import pickle
 from datetime import datetime
 
+import matplotlib.pyplot as plt
+import seaborn as sns; sns.set()
+
 # Silence library version notifications
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -32,10 +35,12 @@ warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 # SETTINGS: 
 #------------------------------------------------------------------------------
 
+fontsize = 16
+ncol = 4
 nheader = 1
 
-station_1 = 'Paris_new_ex_Daniel.Tg'
-station_2 = 'stationfile.txt'
+station_1 = 'DATA/Paris_new_ex_Daniel.Tg'
+station_2 = 'DATA/stationfile.txt'
 
 stationcode = '071560'
 
@@ -130,6 +135,26 @@ with open(stationfile,'w') as f:
                 monthstr = str(np.round(station_data.iloc[i,:][j],1))                
             rowstr += f"{monthstr:>5}"          
         f.write(rowstr+'\n')
+            
+#------------------------------------------------------------------------------
+# PLOT: differences
+#------------------------------------------------------------------------------
+
+figstr = stationcode + '_' + 'station_diff.png'
+titlestr = stationcode
+xstr = 'Year'
+ystr = 'Difference, °C'
+
+fig, ax = plt.subplots(figsize=(15,10))          
+for i in range(1,13):    
+    plt.step(station_diff['year'], station_diff[str(i)], label='Month '+str(i))
+plt.tick_params(labelsize=fontsize)    
+plt.legend(loc='lower left', ncol=ncol, fontsize=12)
+plt.xlabel(xstr, fontsize=fontsize)
+plt.ylabel(ystr, fontsize=fontsize)
+plt.title(titlestr, fontsize=fontsize)
+plt.savefig(figstr)
+plt.close(fig)
             
 #------------------------------------------------------------------------------
 print('** END')
