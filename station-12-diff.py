@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #------------------------------------------------------------------------------
-# PROGRAM: glosat-station-diff.py
+# PROGRAM: station-12-diff.py
 #------------------------------------------------------------------------------
 # Version 0.1
 # 22 July, 2021
@@ -19,16 +19,9 @@ import numpy as np
 import pandas as pd
 import pickle
 from datetime import datetime
-
+# Plotting libraries:
 import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()
-
-# Silence library version notifications
-import warnings
-warnings.filterwarnings("ignore", category=UserWarning)
-warnings.filterwarnings("ignore", category=RuntimeWarning)
-warnings.filterwarnings("ignore", message="numpy.dtype size changed")
-warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
@@ -39,14 +32,15 @@ fontsize = 16
 ncol = 4
 nheader = 1
 
-station_1 = 'DATA/Paris_new_ex_Daniel.Tg'
-station_2 = 'DATA/stationfile.txt'
+station_1 = 'DATA/Paris_new_ex_Daniel.Tg' # CRUTEM format file
+station_2 = 'DATA/071560.txt' 			  # CRUTEM format file
 
 stationcode = '071560'
 
 pkl_archive = 'DATA/df_temp.pkl'
 df_temp = pd.read_pickle(pkl_archive, compression='bz2')    
 station_metadata = df_temp[df_temp['stationcode']==stationcode].iloc[0,14:23]
+stationname = station_metadata.stationname[0]
 
 #------------------------------------------------------------------------------
 # LOAD: station_1
@@ -141,7 +135,7 @@ with open(stationfile,'w') as f:
 #------------------------------------------------------------------------------
 
 figstr = stationcode + '_' + 'station_diff.png'
-titlestr = stationcode
+titlestr = stationcode + ': ' + stationname    
 xstr = 'Year'
 ystr = 'Difference, °C'
 
@@ -149,11 +143,11 @@ fig, ax = plt.subplots(figsize=(15,10))
 for i in range(1,13):    
     plt.step(station_diff['year'], station_diff[str(i)], label='Month '+str(i))
 plt.tick_params(labelsize=fontsize)    
-plt.legend(loc='lower left', ncol=ncol, fontsize=12)
+plt.legend(loc='upper left', ncol=ncol, fontsize=12)
 plt.xlabel(xstr, fontsize=fontsize)
 plt.ylabel(ystr, fontsize=fontsize)
 plt.title(titlestr, fontsize=fontsize)
-plt.savefig(figstr)
+plt.savefig(figstr, dpi=300, bbox_inches='tight')
 plt.close(fig)
             
 #------------------------------------------------------------------------------

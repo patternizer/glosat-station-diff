@@ -19,13 +19,6 @@ import numpy as np
 import pandas as pd
 import pickle
 from datetime import datetime
-
-# Silence library version notifications
-import warnings
-warnings.filterwarnings("ignore", category=UserWarning)
-warnings.filterwarnings("ignore", category=RuntimeWarning)
-warnings.filterwarnings("ignore", message="numpy.dtype size changed")
-warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
@@ -39,7 +32,7 @@ pkl_archive = 'DATA/df_temp.pkl'
 stationcode = '071560' # Paris/Montsouris
 #stationcode = '024581' # Uppsala
 
-stationfile = 'stationfile.txt'
+output_stationfile = 'stationfile.txt'
 
 #------------------------------------------------------------------------------
 # LOAD: GloSAT absolute temperature archive in pickled pandas dataframe format
@@ -61,8 +54,8 @@ station_metadata = df_temp[df_temp['stationcode']==df_temp['stationcode'].unique
 #------------------------------------------------------------------------------
 # FORMAT: station header components in CRUTEM format
 #
-# 37401 525  -17  100 HadCET on 29-11-19   UK            16592019  351721     NAN
-#2019   40   66   78   91  111  141  175  171  143  100 -999 -999
+# 037401 525  -17  100 HadCET on 29-11-19   UK            16592019  351721     NAN
+# 2019   40   66   78   91  111  141  175  171  143  100 -999 -999
 #------------------------------------------------------------------------------
 
 stationlat = "{:<4}".format(str(int(station_metadata[0]*10)))
@@ -73,13 +66,13 @@ stationcountry = "{:<13}".format(station_metadata[4][:13])
 stationfirstlast = str(station_metadata[5]) + str(station_metadata[6])
 stationsourcefirst = "{:<8}".format(str(station_metadata[7]) + str(station_metadata[8]))
 stationgridcell = "{:<3}".format('NAN')
-station_header = ' ' + stationcode[1:] + ' ' + stationlat + ' ' + stationlon + ' ' + stationelevation + ' ' + stationname + ' ' + stationcountry + ' ' + stationfirstlast + '  ' + stationsourcefirst + '   ' + stationgridcell 
+station_header = stationcode + ' ' + stationlat + ' ' + stationlon + ' ' + stationelevation + ' ' + stationname + ' ' + stationcountry + ' ' + stationfirstlast + '  ' + stationsourcefirst + '   ' + stationgridcell 
 
 #------------------------------------------------------------------------------
 # WRITE: station header + yearly rows of monthly values in CRUTEM format
 #------------------------------------------------------------------------------
 
-with open(stationfile,'w') as f:
+with open(output_stationfile,'w') as f:
     f.write(station_header+'\n')
     for i in range(len(station_data)):  
         year = str(int(station_data.iloc[i,:][0]))
